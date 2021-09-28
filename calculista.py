@@ -1,9 +1,10 @@
 import re
 
+float_re=r'\s*?[\d|\.]+\s*?'
+
 def operatorRe(operators): #arr->re with or between every operator
     return '(?:'+'|'.join(operators)+')'
 
-float_re=r'\s*?[\d|\.]+\s*?'
 operators=[['\\*\\*', '\\^'], ['\\*', '\\/'], ['\\+', '\\-']] #grouped into arrays of operators that are equal so they are evaluated at same time (will be prepended by )
 single_dimension_operators=[]
 for sub_operators in operators:
@@ -12,10 +13,8 @@ for sub_operators in operators:
 
 all_expressions_re=operatorRe(single_dimension_operators)
 
-print(all_expressions_re)
 def calc_one_equation(str):
     expressionRe=f'({float_re})({all_expressions_re})({float_re})'
-    print(expressionRe)
     groups=re.search(expressionRe, str).groups()
     first_num=float(groups[0])
     operator=groups[1]
@@ -28,22 +27,37 @@ def calc_one_equation(str):
         return first_num+second_num 
     elif operator=='-':
         return first_num-second_num
-    elif operator=='ab' or operator=='^':
+    elif operator=='**' or operator=='^':
         return first_num**second_num
     else:
         print('Error, operator not recognized.')
 
+factorial_re=fr'({float_re}\!)'
+
+def calc_factorial(str):
+    matched_int=int(re.match(fr'({float_re})\!', str).groups()[0]) #extract int from {int}!
+    product=1
+    while(matched_int>1):
+        product*=matched_int
+        matched_int-=1
+    return product
+
 def calc_many_equations(raw_user_input):
     ans=raw_user_input
 
-    parentheses=re.match('\\('+all_expressions_re+'\\)')
+    #check for factorial
+    factorial_res=re.search(factorial_re, ans)
+    while (factorial_res is not None):
+        start_i=factorial_res.start()
+        end_i=factorial_res.end()
+        ans=ans[0:start_i]+str(calc_factorial(factorial_res.groups()[0]))+ans[end_i:]
+        factorial_res=re.search(factorial_re, ans)
     
-
+    
+    #operators
     for sub_operators in operators:
-        operator_specific_re=operatorRe(sub_operators)
+        operator_specific_re=float_re+operatorRe(sub_operators)+float_re
         searched=re.search(operator_specific_re, ans)
-        print(operator_specific_re)
-        print(searched)
         while searched is not None:
             operator_occurrence=re.search(operator_specific_re, ans)
             start=operator_occurrence.start()
@@ -61,6 +75,6 @@ while True:
         break
     if raw_user_input=='config':
         print('__Config__')
-    print(calc_many_equations(raw_user_input))
+    print(calc_many_equations(raw_user_input)) #print result
 
 print('Goodbye')
