@@ -42,12 +42,23 @@ def calc_factorial(str):
         matched_int-=1
     return product
 
+parentheses_re=fr'\(\s*?(.*)\s*?\)'
+
 def calc_many_equations(raw_user_input):
     ans=raw_user_input
 
+    #parantheses
+    parentheses_res=re.search(parentheses_re, ans)
+    while parentheses_res is not None:
+        start_i=parentheses_res.start()
+        end_i=parentheses_res.end()
+        ans=ans[0:start_i]+str(calc_many_equations(parentheses_res.groups()[0]))+ans[end_i:] #calculate stuff inside parantheses
+        parentheses_res=re.search(parentheses_re, ans)
+
+
     #check for factorial
     factorial_res=re.search(factorial_re, ans)
-    while (factorial_res is not None):
+    while factorial_res is not None:
         start_i=factorial_res.start()
         end_i=factorial_res.end()
         ans=ans[0:start_i]+str(calc_factorial(factorial_res.groups()[0]))+ans[end_i:]
