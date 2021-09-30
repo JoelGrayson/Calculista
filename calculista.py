@@ -42,7 +42,7 @@ def calc_factorial(str):
         matched_int-=1
     return product
 
-parentheses_re=fr'\(\s*?(.*)\s*?\)'
+parentheses_re=fr'\(\s*?(.*?)\s*?\)' #lazy () for smallest capture
 
 def calc_many_equations(raw_user_input):
     ans=raw_user_input
@@ -77,7 +77,7 @@ def calc_many_equations(raw_user_input):
             searched=re.search(operator_specific_re, ans)
     return ans
 
-print('__The Joelavid Calculator__')
+print('__Calculista__')
 print('Enter an equation or \'q\' to quit\n')
 
 while True:
