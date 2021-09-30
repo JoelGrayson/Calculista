@@ -5,7 +5,7 @@ float_re=r'\s*?[\d|\.]+\s*?'
 def operatorRe(operators): #arr->re with or between every operator
     return '(?:'+'|'.join(operators)+')'
 
-operators=[['\\*\\*', '\\^'], ['\\*', '\\/'], ['\\+', '\\-']] #grouped into arrays of operators that are equal so they are evaluated at same time (will be prepended by )
+operators=[['\\*\\*', '\\^'], ['\%'], ['\\*', '\\/'], ['\\+', '\\-']] #grouped into arrays of operators that are equal so they are evaluated at same time (will be prepended by )
 single_dimension_operators=[]
 for sub_operators in operators:
     for operator in sub_operators:
@@ -27,6 +27,8 @@ def calc_one_equation(str):
         return first_num+second_num 
     elif operator=='-':
         return first_num-second_num
+    elif operator=='%':
+        return first_num%second_num
     elif operator=='**' or operator=='^':
         return first_num**second_num
     else:
@@ -42,7 +44,8 @@ def calc_factorial(str):
         matched_int-=1
     return product
 
-parentheses_re=fr'\(\s*?(.*?)\s*?\)' #lazy () for smallest capture
+parentheses_re=fr'\(\s*?(.*?)\s*?\)' #lazy () for smallest captureclear
+
 
 def calc_many_equations(raw_user_input):
     ans=raw_user_input
